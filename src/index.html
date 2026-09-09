@@ -141,6 +141,16 @@ table.data td.up small { color: var(--good); } table.data td.down small { color:
 .table-tools label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
 .note { padding: 14px 16px; color: var(--ink-2); font-size: 12.5px; line-height: 1.5; max-width: 72ch; }
 .note b { color: var(--ink); }
+/* Infobox */
+.info { display: inline-grid; place-items: center; width: 16px; height: 16px; margin-left: 6px; padding: 0; border-radius: 50%; border: 1px solid var(--ink-3); background: transparent; color: var(--ink-3); font: italic 600 10px/1 Georgia, "Times New Roman", serif; vertical-align: 1px; cursor: help; flex: none; }
+.info:hover, .info:focus-visible { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.kpi-label, table.data th, .leitbild tbody th, .chart-card h3 { display: flex; align-items: center; gap: 0; }
+table.data th span, .leitbild tbody th span, .chart-card h3 span { flex: 1 1 auto; } .kpi-label span { flex: 1 1 auto; }
+table.data tr.grp th { display: table-cell; }
+.tip { position: fixed; z-index: 30; max-width: 380px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 24px rgba(23,27,33,.14); padding: 10px 12px; font-size: 12.5px; line-height: 1.45; }
+.tip-in { display: grid; gap: 6px; } .tip-in b { font-family: "Archivo", system-ui, sans-serif; font-stretch: 87.5%; font-size: 13.5px; }
+.tip-in p { color: var(--ink-2); } .tip-in code { display: block; white-space: pre-wrap; background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 5px; padding: 6px 8px; font: 12px/1.45 "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; color: var(--ink); }
+.tip-in .calc { color: var(--ink); font-weight: 500; } .tip-in .note-s { font-size: 11.5px; color: var(--ink-3); }
 #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 13px; z-index: 20; }
 </style>
 </head>
@@ -173,7 +183,7 @@ table.data td.up small { color: var(--good); } table.data td.down small { color:
     <section class="kpis" id="kpis" aria-label="Kennzahlen"></section>
 
     <section class="card" aria-labelledby="h-leitbild">
-      <div class="section-head"><h2 id="h-leitbild">Finanzleitbild: Werden die fünf Grundsätze eingehalten?</h2><p>Grün = erfüllt · Gelb = im Toleranzbereich · Rot = verfehlt</p></div>
+      <div class="section-head"><h2 id="h-leitbild">Finanzleitbild: Werden die fünf Grundsätze eingehalten?</h2><p>Grün = erfüllt · Gelb = im Toleranzbereich · Rot = verfehlt · ⓘ zeigt die Berechnung</p></div>
       <div class="leitbild"><table id="leitbild"></table></div>
     </section>
 
