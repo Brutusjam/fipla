@@ -301,7 +301,7 @@
     ];
     tbl.append(h('thead', {}, h('tr', {}, h('th', { text: 'Grundsatz' }), PLAN_YEARS.map(y => h('th', { text: y })))));
     const tb = h('tbody', {});
-    for (const r of rules) tb.append(h('tr', {}, h('th', {}, h('span', { text: r.name }), infoBtn(r.info, r.name)), PLAN_YEARS.map(y => { const v = r.get(yi(y)); return h('td', {}, h('span', { class: 'pill ' + r.state(v), text: r.fmt(v) })); })));
+    for (const r of rules) tb.append(h('tr', {}, h('th', {}, h('span', { class: 'th-in' }, h('span', { text: r.name }), infoBtn(r.info, r.name))), PLAN_YEARS.map(y => { const v = r.get(yi(y)); return h('td', {}, h('span', { class: 'pill ' + r.state(v), text: r.fmt(v) })); })));
     tbl.append(tb);
   }
 
@@ -338,7 +338,7 @@
       const d = v - b, sig = r.pct ? 0.0005 : 0.5;
       return h('td', { class: (r.neg && v < 0 ? 'neg ' : '') + (Math.abs(d) > sig ? (d > 0 ? 'up' : 'down') : '') }, h('span', { text: r.pct ? fmtP(v, r.d ?? 0) : fmtN(v) }), Math.abs(d) > sig ? h('small', { text: r.pct ? (d > 0 ? '+' : '−') + (Math.abs(d) * 100).toFixed(1) : fmtD(d) }) : null);
     };
-    for (const r of tableRows) { const a = r.get(out), b = r.get(baseOut); tb.append(h('tr', { class: r.bold ? 'bold' : '' }, h('th', {}, h('span', { text: r.label }), infoBtn(() => box(r.label, r.info), r.label)), SHOW_YEARS.map(y => cell(a[yi(y)], b[yi(y)], r)))); }
+    for (const r of tableRows) { const a = r.get(out), b = r.get(baseOut); tb.append(h('tr', { class: r.bold ? 'bold' : '' }, h('th', {}, h('span', { class: 'th-in' }, h('span', { text: r.label }), infoBtn(() => box(r.label, r.info), r.label))), SHOW_YEARS.map(y => cell(a[yi(y)], b[yi(y)], r)))); }
     if ($('#details').checked) for (const [grp, rows] of detailRows) {
       tb.append(h('tr', { class: 'grp' }, h('th', { text: grp, colspan: 9 })));
       for (const [rw, label] of rows) tb.append(h('tr', {}, h('th', { text: label }), SHOW_YEARS.map(y => cell(out.rows[rw][yi(y)] || 0, baseOut.rows[rw][yi(y)] || 0, {}))));

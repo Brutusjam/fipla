@@ -144,9 +144,8 @@ table.data td.up small { color: var(--good); } table.data td.down small { color:
 /* Infobox */
 .info { display: inline-grid; place-items: center; width: 16px; height: 16px; margin-left: 6px; padding: 0; border-radius: 50%; border: 1px solid var(--ink-3); background: transparent; color: var(--ink-3); font: italic 600 10px/1 Georgia, "Times New Roman", serif; vertical-align: 1px; cursor: help; flex: none; }
 .info:hover, .info:focus-visible { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
-.kpi-label, table.data th, .leitbild tbody th, .chart-card h3 { display: flex; align-items: center; gap: 0; }
-table.data th span, .leitbild tbody th span, .chart-card h3 span { flex: 1 1 auto; } .kpi-label span { flex: 1 1 auto; }
-table.data tr.grp th { display: table-cell; }
+.kpi-label, .chart-card h3, .th-in { display: flex; align-items: center; }
+.kpi-label > span, .chart-card h3 > span, .th-in > span { flex: 1 1 auto; }
 .tip { position: fixed; z-index: 30; max-width: 380px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 24px rgba(23,27,33,.14); padding: 10px 12px; font-size: 12.5px; line-height: 1.45; }
 .tip-in { display: grid; gap: 6px; } .tip-in b { font-family: "Archivo", system-ui, sans-serif; font-stretch: 87.5%; font-size: 13.5px; }
 .tip-in p { color: var(--ink-2); } .tip-in code { display: block; white-space: pre-wrap; background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 5px; padding: 6px 8px; font: 12px/1.45 "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; color: var(--ink); }
