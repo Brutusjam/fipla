@@ -166,8 +166,8 @@
         const sw = h('input', { type: 'checkbox', role: 'switch', 'aria-label': p.name + ' aktiv' });
         const shift = h('select', { 'aria-label': 'Verschiebung ' + p.name }, [0, 1, 2, 3].map(s => h('option', { value: s, text: s === 0 ? 'planmässig' : '+' + s + ' J.' })));
         const st = () => L.projects[p.name] || (L.projects[p.name] = { on: true, shift: 0 });
-        sw.addEventListener('change', () => { st().on = sw.checked; recompute(); });
-        shift.addEventListener('change', () => { st().shift = parseInt(shift.value, 10); recompute(); });
+        sw.addEventListener('change', () => { st().on = sw.checked; row._sync(); recompute(); });
+        shift.addEventListener('change', () => { st().shift = parseInt(shift.value, 10); row._sync(); recompute(); });
         const row = h('div', { class: 'proj' },
           h('div', { class: 'proj-main' }, h('span', { class: 'proj-name', text: p.name }), h('span', { class: 'proj-meta' }, h('span', { class: 'chip chip-' + p.cat, text: catLabel[p.cat] }), ' ', fmtN(p.sum) + ' T · ' + p.v.map((v, k) => v ? PLAN_YEARS[k] : null).filter(Boolean).join(', '))),
           h('div', { class: 'proj-ctl' }, shift, h('span', { class: 'switch' }, sw, h('span', { class: 'knob' }))));
@@ -175,7 +175,7 @@
         rows.push(row); list.append(row);
       }
       const wrap = h('div', { class: 'ctl' }, h('div', { class: 'ctl-head' }, h('label', { text: 'Projekte (grösste zuerst, 2027–2032)' })), h('p', { class: 'hint', text: 'Ausschalten streicht das Projekt, Verschieben rückt alle Tranchen um ganze Jahre nach hinten. Tranchen nach 2032 fallen aus dem Horizont.' }), list);
-      wrap._sync = () => rows.forEach(r => r._sync()); return wrap;
+      wrap._sync = () => rows.forEach(r => r._sync()); wrap._sync(); return wrap;
     }
   }
   function getBase(key) { const p = key.split('.'); let o = base; for (const k of p) o = o[k]; return o; }
