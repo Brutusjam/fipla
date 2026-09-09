@@ -168,7 +168,7 @@
         const st = () => L.projects[p.name] || (L.projects[p.name] = { on: true, shift: 0 });
         sw.addEventListener('change', () => { st().on = sw.checked; row._sync(); recompute(); });
         shift.addEventListener('change', () => { st().shift = parseInt(shift.value, 10); row._sync(); recompute(); });
-        const row = h('div', { class: 'proj' },
+        const row = h('label', { class: 'proj' },
           h('div', { class: 'proj-main' }, h('span', { class: 'proj-name', text: p.name }), h('span', { class: 'proj-meta' }, h('span', { class: 'chip chip-' + p.cat, text: catLabel[p.cat] }), ' ', fmtN(p.sum) + ' T · ' + p.v.map((v, k) => v ? PLAN_YEARS[k] : null).filter(Boolean).join(', '))),
           h('div', { class: 'proj-ctl' }, shift, h('span', { class: 'switch' }, sw, h('span', { class: 'knob' }))));
         row._sync = () => { const s = L.projects[p.name] || {}; sw.checked = s.on !== false; shift.value = s.shift || 0; row.classList.toggle('off', s.on === false); row.classList.toggle('changed', s.on === false || (s.shift || 0) > 0); };

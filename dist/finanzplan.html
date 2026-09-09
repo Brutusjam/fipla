@@ -71,8 +71,8 @@ input[type=range] { width: 100%; margin: 6px 0 0; accent-color: var(--accent); h
 .ctl-switch { display: flex; justify-content: space-between; gap: 12px; align-items: center; cursor: pointer; }
 .sw-label { font-weight: 500; font-size: 13px; display: block; }
 .switch { position: relative; width: 36px; height: 20px; flex: none; }
-.switch input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
-.switch .knob { position: absolute; inset: 0; border-radius: 10px; background: var(--ghost); transition: background .15s; }
+.switch input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
+.switch .knob { position: absolute; inset: 0; border-radius: 10px; background: var(--ghost); transition: background .15s; pointer-events: none; }
 .switch .knob::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
 .switch input:checked + .knob { background: var(--accent); }
 .switch input:checked + .knob::after { transform: translateX(16px); }
@@ -643,7 +643,7 @@ window.FINANZPLAN_DATA = {"years": [2021, 2022, 2023, 2024, 2025, 2026, 2027, 20
         const st = () => L.projects[p.name] || (L.projects[p.name] = { on: true, shift: 0 });
         sw.addEventListener('change', () => { st().on = sw.checked; row._sync(); recompute(); });
         shift.addEventListener('change', () => { st().shift = parseInt(shift.value, 10); row._sync(); recompute(); });
-        const row = h('div', { class: 'proj' },
+        const row = h('label', { class: 'proj' },
           h('div', { class: 'proj-main' }, h('span', { class: 'proj-name', text: p.name }), h('span', { class: 'proj-meta' }, h('span', { class: 'chip chip-' + p.cat, text: catLabel[p.cat] }), ' ', fmtN(p.sum) + ' T · ' + p.v.map((v, k) => v ? PLAN_YEARS[k] : null).filter(Boolean).join(', '))),
           h('div', { class: 'proj-ctl' }, shift, h('span', { class: 'switch' }, sw, h('span', { class: 'knob' }))));
         row._sync = () => { const s = L.projects[p.name] || {}; sw.checked = s.on !== false; shift.value = s.shift || 0; row.classList.toggle('off', s.on === false); row.classList.toggle('changed', s.on === false || (s.shift || 0) > 0); };
