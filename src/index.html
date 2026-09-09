@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finanzplan-Simulator Altdorf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@87.5,500;87.5,600;87.5,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f2f3f5; --surface: #ffffff; --surface-2: #f7f8fa; --ink: #171b21; --ink-2: #4b5461; --ink-3: #7f8894; --line: #dfe3e8; --line-2: #eceef2;
+  --s1: #2a78d6; --s2: #eb6834; --ghost: #c3c9d1; --accent: #1f5fbf; --accent-ink: #ffffff;
+  --good: #1a7f37; --good-bg: #e3f3e7; --warn: #9a6700; --warn-bg: #fbf0d4; --crit: #c8322f; --crit-bg: #fbe4e3;
+  --focus: #2a78d6; --shadow: 0 1px 2px rgba(23,27,33,.06), 0 4px 16px rgba(23,27,33,.05);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  color-scheme: dark; --bg: #14171b; --surface: #1d2126; --surface-2: #23282e; --ink: #edf0f3; --ink-2: #b1b9c3; --ink-3: #7d8792; --line: #30363d; --line-2: #282d34;
+  --s1: #3987e5; --s2: #d95926; --ghost: #4b545e; --accent: #4a8fe8; --accent-ink: #0f1319;
+  --good: #3fb950; --good-bg: #16301c; --warn: #d29922; --warn-bg: #33270c; --crit: #f0605d; --crit-bg: #3a1a1a; --shadow: none;
+} }
+:root[data-theme="dark"] {
+  color-scheme: dark; --bg: #14171b; --surface: #1d2126; --surface-2: #23282e; --ink: #edf0f3; --ink-2: #b1b9c3; --ink-3: #7d8792; --line: #30363d; --line-2: #282d34;
+  --s1: #3987e5; --s2: #d95926; --ghost: #4b545e; --accent: #4a8fe8; --accent-ink: #0f1319;
+  --good: #3fb950; --good-bg: #16301c; --warn: #d29922; --warn-bg: #33270c; --crit: #f0605d; --crit-bg: #3a1a1a; --shadow: none;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.5 "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: "Archivo", "IBM Plex Sans", system-ui, sans-serif; font-stretch: 87.5%; letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+h1 { font-size: 20px; font-weight: 700; } h2 { font-size: 17px; font-weight: 600; } h3 { font-size: 15px; font-weight: 600; }
+p { margin: 0; } small { font-size: 11px; } button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+
+/* Kopfzeile */
+header.top { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.top-in { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding: 10px 20px; max-width: 1560px; margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+.brand .mark { width: 30px; height: 30px; border-radius: 6px; background: linear-gradient(135deg, #f4c400, #e0a800); display: grid; place-items: center; }
+.brand .mark span { display: block; width: 10px; height: 10px; border-radius: 50%; background: #171b21; border: 2px solid #171b21; box-shadow: inset 0 0 0 2px #f4c400; }
+.brand p { color: var(--ink-3); font-size: 12px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.toolbar input[type=text], .toolbar select { height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); min-width: 170px; }
+.btn { height: 32px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); font-weight: 500; }
+.btn:hover { background: var(--surface-2); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn.file { position: relative; overflow: hidden; }
+.btn.file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+/* Layout */
+.wrap { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 20px; padding: 20px; max-width: 1560px; margin: 0 auto; }
+aside { position: sticky; top: 62px; max-height: calc(100vh - 72px); overflow-y: auto; overflow-x: hidden; scrollbar-width: thin; min-width: 0; }
+main { display: grid; gap: 20px; align-content: start; }
+@media (max-width: 980px) { .wrap { grid-template-columns: 1fr; } aside { position: static; max-height: none; } }
+
+/* Hebel */
+.panel-head { padding: 0 4px 10px; }
+.panel-head p { color: var(--ink-2); font-size: 12.5px; }
+details.sec { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; }
+details.sec summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 14px; font-family: "Archivo", system-ui, sans-serif; font-stretch: 87.5%; font-weight: 600; font-size: 14.5px; }
+details.sec summary::-webkit-details-marker { display: none; }
+details.sec summary::before { content: ""; width: 7px; height: 7px; border-right: 1.5px solid var(--ink-3); border-bottom: 1.5px solid var(--ink-3); transform: rotate(-45deg); margin-right: 8px; transition: transform .15s; }
+details.sec[open] summary::before { transform: rotate(45deg); }
+details.sec summary span:first-of-type { margin-right: auto; }
+.sec-badge { font-size: 11px; font-weight: 600; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); padding: 1px 7px; border-radius: 10px; }
+.sec-badge:empty { display: none; }
+.sec-body { padding: 4px 14px 12px; border-top: 1px solid var(--line-2); display: grid; gap: 12px; min-width: 0; }
+.ctl { padding-left: 8px; border-left: 2px solid transparent; min-width: 0; }
+.ctl.changed { border-left-color: var(--accent); }
+.ctl-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.ctl-head label { font-weight: 500; font-size: 13px; }
+.ctl-val { font-weight: 600; font-size: 13px; white-space: nowrap; }
+.hint { color: var(--ink-3); font-size: 11.5px; line-height: 1.35; margin-top: 2px; }
+input[type=range] { width: 100%; margin: 6px 0 0; accent-color: var(--accent); height: 20px; }
+.ctl-year { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: -8px; }
+.ctl-year label { font-size: 12px; color: var(--ink-2); }
+.ctl-year select, .proj select { height: 26px; padding: 0 6px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface-2); font-size: 12px; }
+.ctl-switch { display: flex; justify-content: space-between; gap: 12px; align-items: center; cursor: pointer; }
+.sw-label { font-weight: 500; font-size: 13px; display: block; }
+.switch { position: relative; width: 36px; height: 20px; flex: none; }
+.switch input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.switch .knob { position: absolute; inset: 0; border-radius: 10px; background: var(--ghost); transition: background .15s; }
+.switch .knob::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.switch input:checked + .knob { background: var(--accent); }
+.switch input:checked + .knob::after { transform: translateX(16px); }
+.switch input:focus-visible + .knob { outline: 2px solid var(--focus); outline-offset: 2px; }
+.projects { display: grid; gap: 6px; margin-top: 8px; max-height: 420px; overflow-y: auto; overflow-x: hidden; padding-right: 4px; scrollbar-width: thin; min-width: 0; }
+.proj { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 6px 8px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface-2); min-width: 0; }
+.proj-main { min-width: 0; flex: 1; }
+.proj.off { opacity: .55; } .proj.changed { border-color: var(--accent); }
+.proj-name { display: block; font-size: 12.5px; font-weight: 500; line-height: 1.3; }
+.proj-meta { font-size: 11px; color: var(--ink-3); }
+.proj-ctl { display: flex; gap: 6px; align-items: center; flex: none; }
+.chip { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 0 5px; border-radius: 4px; background: var(--line-2); color: var(--ink-2); }
+
+/* Karten & Kennzahlen */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow); }
+.kpi-label { font-size: 12px; color: var(--ink-2); }
+.kpi-value { font-family: "Archivo", system-ui, sans-serif; font-stretch: 87.5%; font-size: 26px; font-weight: 600; line-height: 1.2; margin: 4px 0 2px; }
+.kpi-delta { font-size: 11.5px; color: var(--ink-3); }
+.kpi-delta.good { color: var(--good); } .kpi-delta.bad { color: var(--crit); }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 14px 16px 0; }
+.section-head p { color: var(--ink-3); font-size: 12.5px; }
+
+/* Finanzleitbild */
+.leitbild { overflow-x: auto; padding: 10px 16px 14px; }
+.leitbild table { border-collapse: collapse; width: 100%; min-width: 640px; }
+.leitbild th { text-align: left; font-weight: 500; font-size: 12.5px; padding: 6px 8px 6px 0; color: var(--ink-2); }
+.leitbild thead th { color: var(--ink-3); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; text-align: center; border-bottom: 1px solid var(--line-2); }
+.leitbild thead th:first-child { text-align: left; }
+.leitbild td { text-align: center; padding: 4px 3px; }
+.pill { display: inline-block; min-width: 68px; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.pill.good { background: var(--good-bg); color: var(--good); } .pill.warn { background: var(--warn-bg); color: var(--warn); } .pill.crit { background: var(--crit-bg); color: var(--crit); }
+
+/* Grafiken */
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
+@media (max-width: 520px) { .charts { grid-template-columns: 1fr; } }
+.chart-card { margin: 0; padding: 14px 16px 8px; }
+.chart-card figcaption .sub { color: var(--ink-3); font-size: 12px; margin-top: 2px; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--ink-2); margin-top: 6px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+.legend i.ghost { background: var(--ghost); }
+.plot { margin-top: 6px; min-height: 240px; }
+svg.chart { display: block; overflow: visible; }
+svg.chart .grid { stroke: var(--line-2); stroke-width: 1; } svg.chart .zero { stroke: var(--ink-3); stroke-width: 1; }
+svg.chart .threshold { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 3 3; }
+svg.chart .tick { fill: var(--ink-3); font-size: 11px; font-family: inherit; } svg.chart .tick.hist { fill: var(--ghost); }
+svg.chart .bar { transition: d .25s; } svg.chart .bar.ghost { opacity: .9; }
+svg.chart .dot { stroke: var(--surface); stroke-width: 2; }
+@media (prefers-reduced-motion: reduce) { svg.chart .bar, .switch .knob, .switch .knob::after { transition: none; } }
+
+/* Tabelle */
+.table-wrap { overflow-x: auto; padding: 8px 16px 14px; }
+table.data { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 12.5px; }
+table.data th, table.data td { padding: 5px 8px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+table.data th { text-align: left; font-weight: 500; color: var(--ink-2); }
+table.data thead th { text-align: right; color: var(--ink-3); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+table.data thead th:first-child { text-align: left; } table.data thead th.hist { color: var(--ghost); }
+table.data td { text-align: right; }
+table.data tr.bold th, table.data tr.bold td { font-weight: 600; color: var(--ink); }
+table.data tr.grp th { padding-top: 12px; color: var(--ink-3); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-bottom-color: var(--line); }
+table.data td.neg span { color: var(--crit); }
+table.data td small { display: block; font-size: 10.5px; color: var(--ink-3); line-height: 1.1; }
+table.data td.up small { color: var(--good); } table.data td.down small { color: var(--crit); }
+.table-tools { display: flex; gap: 14px; align-items: center; font-size: 12.5px; }
+.table-tools label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+.note { padding: 14px 16px; color: var(--ink-2); font-size: 12.5px; line-height: 1.5; max-width: 72ch; }
+.note b { color: var(--ink); }
+#toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 13px; z-index: 20; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"><span></span></div>
+      <div><h1>Finanzplan-Simulator Altdorf</h1><p>Finanzplan BG 2027 · 1. Lesung Budget 2027 · Planjahre 2027–2032 · Beträge in 1'000 CHF</p></div>
+    </div>
+    <div class="toolbar">
+      <input type="text" id="scenario-name" placeholder="Name des Szenarios" aria-label="Name des Szenarios">
+      <button class="btn primary" id="save">Speichern</button>
+      <select id="scenario-list" aria-label="Gespeicherte Szenarien"></select>
+      <button class="btn" id="share">Link teilen</button>
+      <button class="btn" id="export">JSON exportieren</button>
+      <label class="btn file">Importieren<input type="file" id="import" accept="application/json" aria-label="Szenario importieren"></label>
+      <button class="btn" id="reset">Zurücksetzen</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside>
+    <div class="panel-head"><span class="eyebrow">Stellhebel</span><p>Alle Hebel wirken ab dem gewählten Planjahr. Die grauen Balken zeigen den unveränderten Finanzplan, die blauen das Szenario.</p></div>
+    <div id="levers"></div>
+  </aside>
+
+  <main>
+    <section class="kpis" id="kpis" aria-label="Kennzahlen"></section>
+
+    <section class="card" aria-labelledby="h-leitbild">
+      <div class="section-head"><h2 id="h-leitbild">Finanzleitbild: Werden die fünf Grundsätze eingehalten?</h2><p>Grün = erfüllt · Gelb = im Toleranzbereich · Rot = verfehlt</p></div>
+      <div class="leitbild"><table id="leitbild"></table></div>
+    </section>
+
+    <section class="charts" id="charts" aria-label="Grafiken"></section>
+
+    <section class="card" aria-labelledby="h-table">
+      <div class="section-head"><h2 id="h-table">Kennzahlen im Detail</h2>
+        <div class="table-tools"><label><input type="checkbox" id="details"> Erfolgsrechnung anzeigen</label><button class="btn" id="csv">CSV herunterladen</button></div></div>
+      <div class="table-wrap"><table class="data" id="table"></table></div>
+    </section>
+
+    <section class="card note">
+      <b>Wie gerechnet wird.</b> Das Modell bildet die Formeln des Excel-Finanzplans nach: Aufwand- und Ertragspositionen wachsen ab 2028 mit den gewählten Raten vom Budget 2027 aus. Investitionen erhöhen das Verwaltungsvermögen und werden degressiv abgeschrieben (Hochbau 10 %, Tiefbau 7 %, Mobilien 50 %). Was die Selbstfinanzierung nicht deckt, wird über neue Darlehen finanziert, die im Folgejahr Zinsen kosten. Das Eigenkapital verändert sich um das Jahresergebnis. Rechnungsjahre bis 2025, Hochrechnung 2026 und Budget 2027 bleiben fix, Steuern ab 2027 folgen dem Steuerfuss. Ohne veränderte Hebel entspricht jedes Resultat dem Excel auf die Rundung genau.
+    </section>
+  </main>
+</div>
+<div id="toast" hidden></div>
+<script src="data.js"></script>
+<script src="model.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
